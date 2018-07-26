@@ -78,20 +78,6 @@ public class FirstPartTasksTest {
     }
 
     @Test
-    public void testGroupByArtistMapName() {
-        assertEquals(
-                ImmutableMap.of(
-                        ARTIST_0, Arrays.asList(ALBUM_2.getName(), ALBUM_3.getName()),
-                        ARTIST_3, Arrays.asList(ALBUM_9.getName(), ALBUM_10.getName()),
-                        ARTIST_7, Arrays.asList(ALBUM_17.getName(), ALBUM_19.getName())),
-                groupByArtistMapName(Stream.of(ALBUM_2, ALBUM_9, ALBUM_3, ALBUM_10, ALBUM_17, ALBUM_19)));
-
-        assertEquals(
-                Collections.emptyMap(),
-                groupByArtistMapName(Stream.of()));
-    }
-
-    @Test
     public void testCountAlbumDuplicates() {
         assertEquals(
                 0,

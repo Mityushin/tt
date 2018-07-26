@@ -12,17 +12,7 @@ public class SecondPartTasksTest {
     }
 
     @Test
-    public void testPiDividedBy4() {
-        fail();
-    }
-
-    @Test
     public void testFindPrinter() {
-        fail();
-    }
-
-    @Test
-    public void testCalculateGlobalOrder() {
         fail();
     }
 }

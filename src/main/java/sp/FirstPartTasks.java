@@ -35,11 +35,6 @@ public final class FirstPartTasks {
         throw new UnsupportedOperationException();
     }
 
-    // Сгруппировать альбомы по артистам (в качестве значения вместо объекта 'Artist' использовать его имя)
-    public static Map<Artist, List<String>> groupByArtistMapName(Stream<Album> albums) {
-        throw new UnsupportedOperationException();
-    }
-
     // Число повторяющихся альбомов в потоке
     public static long countAlbumDuplicates(Stream<Album> albums) {
         throw new UnsupportedOperationException();
