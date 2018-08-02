@@ -86,7 +86,7 @@ public final class FirstPartTasks {
                 .entrySet()
                 .stream()
                 .min(Map.Entry.comparingByValue(Integer::compare))
-                .map(x -> x.getKey());
+                .map(Map.Entry::getKey);
     }
 
     // Список альбомов, отсортированный по убыванию среднего рейтинга его треков (0, если треков нет)
@@ -95,12 +95,12 @@ public final class FirstPartTasks {
                 .collect(Collectors.toMap(
                         Function.identity(),
                         (Album x) -> {
-                            long count = x.getTracks().stream().count();
+                            long count = (long) x.getTracks().size();
                             if (count == 0) {
                                 return 0L;
                             }
                             int sum = x.getTracks().stream()
-                                    .mapToInt(y -> y.getRating())
+                                    .mapToInt(Track::getRating)
                                     .sum();
                             return sum / count;
                         })
@@ -108,7 +108,7 @@ public final class FirstPartTasks {
                 .entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue(Long::compare)))
-                .map(x -> x.getKey())
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
@@ -116,7 +116,7 @@ public final class FirstPartTasks {
     // (все числа от 0 до 10000)
     public static int moduloProduction(IntStream stream, int modulo) {
         return stream
-                .reduce((int a, int b) -> a * b % modulo)
+                .reduce((a, b) -> ((a % modulo) * (b % modulo) % modulo))
                 .getAsInt();
     }
 
