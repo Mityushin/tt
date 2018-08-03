@@ -13,7 +13,10 @@ public class SecondPartTasksTest {
 
     @Test
     public void testFindQuotes() {
-        fail();
+        assertEquals(
+                Arrays.asList(BOOK_2_CONTENT),
+                findQuotes(Arrays.asList(BOOK_0, BOOK_1, BOOK_2, BOOK_3, BOOK_4), "ccc")
+        );
     }
 
     @Test

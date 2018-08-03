@@ -15,27 +15,16 @@ public final class SecondPartTasks {
 
     // Найти строки из переданных файлов, в которых встречается указанная подстрока.
     public static List<String> findQuotes(List<String> paths, CharSequence sequence) {
-
-        List<String> result = new ArrayList<>();
-
-        for (String strPath : paths) {
-
-            Path path = Paths.get(strPath);
-
-            try (Stream<String> lineStream = Files.lines(path)) {
-
-                result.addAll(
-                        lineStream
-                                .filter(x -> x.contains(sequence))
-                                .collect(Collectors.toList()));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-
+        return paths.stream()
+                .map(x -> Paths.get(x))
+                .flatMap(y -> {
+                    try (Stream<String> data = Files.lines(y)) {
+                        return data.filter(z -> z.contains(sequence));
+                    } catch (IOException e) {
+                        return Stream.empty();
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     // Дано отображение из имени автора в список с содержанием его произведений.
