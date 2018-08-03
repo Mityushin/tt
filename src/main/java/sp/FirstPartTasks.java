@@ -38,14 +38,7 @@ public final class FirstPartTasks {
 
     // Список альбомов, в которых есть хотя бы один трек с рейтингом более 95, отсортированный по названию
     public static List<Album> sortedFavorites(Stream<Album> albums) {
-        return albums
-                .filter(album ->
-                        !album
-                                .getTracks()
-                                .stream()
-                                .filter(track -> track.getRating() > 95)
-                                .collect(Collectors.toList())
-                                .isEmpty())
+        return albums.filter(x -> x.getTracks().stream().mapToInt(Track::getRating).max().orElse(0) > 95)
                 .sorted(Comparator.comparing(Album::getName))
                 .collect(Collectors.toList());
     }
@@ -59,7 +52,7 @@ public final class FirstPartTasks {
     // Число повторяющихся альбомов в потоке
     public static long countAlbumDuplicates(Stream<Album> albums) {
         return albums
-                .collect(Collectors.groupingBy(x -> x, Collectors.counting()))
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream()
                 .filter(x -> x.getValue() > 1)
@@ -69,46 +62,16 @@ public final class FirstPartTasks {
     // Альбом, в котором максимум рейтинга минимален
     // (если в альбоме нет ни одного трека, считать, что максимум рейтинга в нем --- 0)
     public static Optional<Album> minMaxRating(Stream<Album> albums) {
-        return albums
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        (Album x) -> {
-                            List<Track> list;
-                            if ((list = x.getTracks()).isEmpty()) {
-                                return 0;
-                            }
-                            return list.stream()
-                                    .map(Track::getRating)
-                                    .max(Integer::compareTo)
-                                    .get();
-                        }
-                ))
-                .entrySet()
-                .stream()
-                .min(Map.Entry.comparingByValue(Integer::compare))
-                .map(Map.Entry::getKey);
+        return albums.map(x -> new AbstractMap.SimpleEntry<>(x, x.getTracks().stream().mapToInt(Track::getRating).max().orElse(0)))
+                .min(Comparator.comparingInt(AbstractMap.SimpleEntry::getValue))
+                .map(AbstractMap.SimpleEntry::getKey);
     }
 
     // Список альбомов, отсортированный по убыванию среднего рейтинга его треков (0, если треков нет)
     public static List<Album> sortByAverageRating(Stream<Album> albums) {
-        return albums
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        (Album x) -> {
-                            long count = (long) x.getTracks().size();
-                            if (count == 0) {
-                                return 0L;
-                            }
-                            int sum = x.getTracks().stream()
-                                    .mapToInt(Track::getRating)
-                                    .sum();
-                            return sum / count;
-                        })
-                )
-                .entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue(Long::compare)))
-                .map(Map.Entry::getKey)
+        return albums.map(x -> new AbstractMap.SimpleEntry<>(x, x.getTracks().stream().mapToInt(Track::getRating).summaryStatistics().getAverage()))
+                .sorted(Comparator.comparing(AbstractMap.SimpleEntry::getValue, Comparator.reverseOrder()))
+                .map(AbstractMap.SimpleEntry::getKey)
                 .collect(Collectors.toList());
     }
 
@@ -116,17 +79,15 @@ public final class FirstPartTasks {
     // (все числа от 0 до 10000)
     public static int moduloProduction(IntStream stream, int modulo) {
         return stream
-                .reduce((a, b) -> ((a % modulo) * (b % modulo) % modulo))
-                .getAsInt();
+                .reduce(1, (a, b) -> ((a % modulo) * (b % modulo) % modulo));
     }
 
     // Вернуть строку, состояющую из конкатенаций переданного массива, и окруженную строками "<", ">"
     // см. тесты
     public static String joinTo(String... strings) {
 
-        return "<".concat(Arrays.stream(strings)
-                .collect(Collectors.joining(", ")))
-                .concat(">");
+        return Arrays.stream(strings)
+                .collect(Collectors.joining(", ", "<", ">"));
     }
 
     // Вернуть поток из объектов класса 'clazz'
